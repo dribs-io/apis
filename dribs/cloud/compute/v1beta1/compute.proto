@@ -1,0 +1,151 @@
+syntax = "proto3";
+
+package dribs.cloud.compute.v1beta1;
+
+option go_package = "go.dribs.io/genproto/dribs/cloud/compute/v1beta1;compute";
+option java_package = "io.dribs.cloud.compute.v1beta1";
+
+service Instances {
+    rpc CreateInstance(CreateInstanceRequest) returns (Operation) {}
+}
+
+
+// A Dribs Compute instance.
+message Instance {
+    // The current status of the instance.
+    enum Status {
+        // Not set.
+        STATUS_UNSPECIFIED = 0;
+
+        // The instance is being created and resources are being allocated for the instance.
+        PROVISIONING = 1;
+
+        // Resources have been acquired and the instance is being prepared for first boot.
+        STAGING = 2;
+
+        // The instance is running or is booting up.
+        // One should be able to ssh into the instance soon, but not immediately after is enters this state.
+        RUNNING = 3;
+
+        // The instance is being stopped.
+        // This can be because of a request to stop the instance or there was a failure.
+        // This is a temporary status and the instance will move to TERMINATED once the instance has stopped.
+        STOPPING = 4;
+
+        // The instance is stopped, or the instance encountered a failure.
+        // Restart the instance or delete it.
+        TERMINATED = 5;
+    }
+
+    // The globally unique id of this instance.
+    string id = 1;
+
+    // The name of this instance. The name must be unique within this project
+    // and zone, and can be up to 40 characters with the following restrictions:
+    //
+    // * Lowercase letters, numbers, and hyphens only.
+    // * Must start with a letter.
+    // * Must end with a number or a letter.
+    string name = 2;
+
+    // An optional description of this instance.
+    string description = 3;
+
+    // The time when the instance was created.
+    string create_time = 4;
+
+    // The current status of this instance.
+    Status status = 5;
+
+    // Additional information about the current status of this instance, if available.
+    string status_message = 6;
+
+    // The time when the instance will be automatically deleted, if available.
+    // This timestamp is an approximation of when the actual action to delete this instance is triggered.
+    string expire_time = 7;
+
+    // The name of the zone in which the instance resides.
+    // Zone names always contain the region name.
+    string zone = 8;
+
+    // The machine type of this instance.
+    // Currently custom machine types can be used
+    // and there are no predefined machine types.
+    //
+    // Custom:
+    // * define a custom machine type in the format 'custom-CPUS-MEMORY'
+    // * CPUS must be 1 or an even number (2, 4, 6, ... 28, etc)
+    // * MEMORY must be a multiple of 256 MB and must be supplied in MB (e.g. 3 GB is 3072 MB)
+    //
+    // which are defined like so:
+    string machineType = 9;
+
+    // Labels applied to the instance.
+    map<string, string> labels = 10;
+
+    // The metadata assigned to this instance.
+    // This includes custom metadata and predefined keys.
+    map<string, string> metadata = 11;
+}
+
+// This operation resource represents an ongoing or finished operation happening or happened to the Instance.
+// All fields are output only.
+message Operation {
+    // Current status of the operation.
+    enum Status {
+        // Not set.
+        STATUS_UNSPECIFIED = 0;
+
+        // The operation has been created.
+        PENDING = 1;
+
+        // The operation is currently running.
+        RUNNING = 2;
+
+        // The operation is done, either cancelled or completed.
+        DONE = 3;
+
+        // The operation is aborting.
+        ABORTING = 4;
+    }
+
+    // Operation type.
+    enum Type {
+        // Not set.
+        TYPE_UNSPECIFIED = 0;
+
+        // Instance create.
+        CREATE_INSTANCE = 1;
+
+        // Instance delete.
+        DELETE_INSTANCE = 2;
+    }
+
+    // The server-assigned ID for the operation.
+    string name = 1;
+
+    // The operation type.
+    Type operation_type = 2;
+
+    // The current status of the operation.
+    Status status = 3;
+
+    // If an error has occurred, a textual description of the error.
+    string status_message = 4;
+
+    // Detailed operation progress, if available.
+    string detail = 5;
+
+    // The name of the zone in which the instance resides.
+    string zone = 6;
+
+    // The time when the operation started.
+    string start_time = 7;
+
+    // The time when the operation completed.
+    string end_time = 8;
+}
+
+// CreateInstanceRequest creates an instance.
+message CreateInstanceRequest {
+}
