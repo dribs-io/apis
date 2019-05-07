@@ -5,6 +5,8 @@ package dribs.cloud.compute.v1beta1;
 option go_package = "go.dribs.io/genproto/dribs/cloud/compute/v1beta1;compute";
 option java_package = "io.dribs.cloud.compute.v1beta1";
 
+import "google/protobuf/timestamp.proto";
+
 service Instances {
     rpc CreateInstance(CreateInstanceRequest) returns (Operation) {}
 }
@@ -52,7 +54,7 @@ message Instance {
     string description = 3;
 
     // The time when the instance was created.
-    string create_time = 4;
+    google.protobuf.Timestamp create_time = 4;
 
     // The current status of this instance.
     Status status = 5;
@@ -62,7 +64,7 @@ message Instance {
 
     // The time when the instance will be automatically deleted, if available.
     // This timestamp is an approximation of when the actual action to delete this instance is triggered.
-    string expire_time = 7;
+    google.protobuf.Timestamp expire_time = 7;
 
     // The name of the zone in which the instance resides.
     // Zone names always contain the region name.
@@ -140,10 +142,10 @@ message Operation {
     string zone = 6;
 
     // The time when the operation started.
-    string start_time = 7;
+    google.protobuf.Timestamp start_time = 7;
 
     // The time when the operation completed.
-    string end_time = 8;
+    google.protobuf.Timestamp end_time = 8;
 }
 
 // CreateInstanceRequest creates an instance.
